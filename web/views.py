@@ -60,7 +60,7 @@ def register(request):
                             subject= 'فعالسازی حساب کثیر',
                             sender= 'abfani90@gmail.com',
                             to= email,
-                            text_body= "برای فعالسازی حساب کثیر خود روی لینک روبرو کلیک کنید http://localhost:8009/accounts/register/?email={}$code={}".format(email, code),
+                            text_body= "برای فعالسازی حساب کثیر خود روی لینک روبرو کلیک کنید {}?email={}$code={}".format(request.build_absolute_uri('/accounts/register'), email, code),
                             tag= "account request")
             message.send()
             context= {'message', 'لینک فعالسازی حساب به ایمیل شما فرستاده شده است لطفا ایمیل خود را چک کنید.'}
