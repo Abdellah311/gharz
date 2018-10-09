@@ -11,7 +11,9 @@ from web.models import Token, User, Kharj, Daramad, Passwordresetcodes
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
 from postmark import PMMail
+from mailchimp import Mailchimp
 import string,time,random
+import smtplib
 
 # Create your views here.
 
@@ -56,13 +58,19 @@ def register(request):
             username= request.POST['username']
             temporarycode= Passwordresetcodes(email= email, time= now, code= code, username= username, password= password)
             temporarycode.save()
-            message= PMMail(api_key= settings.POSTMARK_API_TOKEN,
+            server= smtplib.SMTP_SSL('smtp.yandex.com.tr:465')
+            #server.starttls()
+            server.ehlo()
+            server.login('abutalebam','Abutaleb@313')
+            msg=  "برای فعالسازی حساب کثیر خود روی لینک روبرو کلیک کنید {}?email={}$code={}".format(request.build_absolute_uri('/accounts/register'), email, code)
+            server.sendmail("abutalebam@yandex.com",email,msg)
+            """message= Mailchimp(api_key= settings.POSTMARK_API_TOKEN,
                             subject= 'فعالسازی حساب کثیر',
                             sender= 'abfani90@gmail.com',
                             to= email,
                             text_body= "برای فعالسازی حساب کثیر خود روی لینک روبرو کلیک کنید {}?email={}$code={}".format(request.build_absolute_uri('/accounts/register'), email, code),
                             tag= "account request")
-            message.send()
+            message.send()"""
             context= {'message', 'لینک فعالسازی حساب به ایمیل شما فرستاده شده است لطفا ایمیل خود را چک کنید.'}
             return render(request,'login.html',context)
         else:
